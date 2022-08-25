@@ -1,0 +1,112 @@
+tener instalado (revisar versiones)
+docker
+minikube
+kubectl
+
+comandos docker utiles:
+docker images
+docker rmi “image” (remueve imagenes)
+docker rm “container” (remueve containers)
+docker ps (imagenes corriendo)
+docker ps -a (imagenes que corrieron)
+
+------
+revisar si se crea la tabla en el pod de mysql
+kubectl exec.....
+
+mysql -u root -p
+(la password es Notebook123! pero puede cambiar!)
+
+----
+
+
+
+generar un proyecto maven java con spring Boot
+
+generar un Dockerfile en la raiz del proyecto (LF tipo de line separator)
+
+ejemplo de Dockerfile (puede variar de acuerdo a la arquitectura de la compu la imagen de java a utilizar):
+FROM adoptopenjdk/openjdk11
+ADD target/docker-spring-boot-db.jar /docker-spring-boot-db.jar
+EXPOSE 8090
+ENTRYPOINT ["java", "-jar", "docker-spring-boot-db.jar"]
+target/docker-spring-boot-db.jar: Sera el nombre del .jar generado en esa ruta del proyecto, puede variar de acuerdo al nombre que le elijamos
+
+buildear el proyecto:
+mvn clean install
+
+buildear la imagen docker (incluido el punto final):
+docker build -f Dockerfile -t docker-spring-boot-db .
+
+revisar si esta la imagen creada con el nombre docker-spring-boot-db
+docker images
+
+correr la imagen generada:
+docker run -p 8090:8090 docker-spring-boot-db
+
+Commiteamos la imagen donde el 9a98519d65c1 es el image-id:
+docker commit 9a98519d65c1 csulak/docker-spring-boot-db-v1:1
+
+Revisar que este la imagen generada con el nuevo nombre csulak/docker-spring-boot-db-v1:
+docker images
+
+
+
+
+
+Loguearnos a Docker:
+docker login
+usuario: csulak
+contrasela: gatito123
+
+Pusheamos la imagen creada ‘nombre:tag’:
+docker push csulak/docker-spring-boot-db-v1-:1
+
+Confirmar que nuestra imagen fue pusheada a nuestra cuenta en docker hub:
+https://hub.docker.com/
+
+Corroborrar que nuestra imagen docker funciona sin ninguna dependencia en nuestra pc:
+
+eliminar los container relacionados
+listar containers:
+docker ps -a
+
+eliminar containers:
+docker rm ‘container-id’
+
+eliminar las imagenes relacionadas
+listar imagenes:
+docker images
+
+eliminar imagenes:
+docker rmi image-id
+
+Pullear nuestra imagen alojada docker hub:
+docker pull csulak/docker-spring-boot-db-v1:1
+
+correr la imagen se debe especificar el tag:
+docker run -p 8090:8090 csulak/docker-spring-boot-db-v1:1  
+
+
+
+Kubernetes
+
+levantar minikube:
+minikube start --driver=docker --alsologtostderr
+
+comprobar que esta levantado ejecutando algun comando de kubectl:
+kubectl get ns
+
+Crear deployment desde el file (localizarnos en la carpeta k8s):
+kubectl apply -f java-deployment.yaml
+
+Crear service desde el file (localizarnos en la carpeta k8s):
+kubectl apply -f java-service.yaml
+
+Corroborar que el service creado esta apuntado al deployment creado. La ip del pod y del service(endpoint) deben ser la misma
+
+chequear la ip del pod:
+kubectl get pods -o wide
+
+chequear, en el service, la ip y el puerto del campo "endpoint":
+kubectl describe service java-service

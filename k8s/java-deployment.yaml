@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-deployment
+  labels:
+    app: java
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: java
+  template:
+    metadata:
+      labels:
+        app: java
+    spec:
+      containers:
+        - name: java
+          image: csulak/docker-spring-boot-db-v1:4
+          ports:
+          - containerPort: 8090
+          env:
+          - name: DB_HOST
+            valueFrom:
+              configMapKeyRef:
+                name: config-configmap
+                key: database-url
+          - name: DB_NAME
+            valueFrom:
+              secretKeyRef:
+                name: config-secret
+                key: mysql-db-name
+          - name: DB_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: config-secret
+                key: mysql-root-username
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: config-secret
+                key: mysql-root-password

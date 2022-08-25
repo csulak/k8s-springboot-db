@@ -1,0 +1,33 @@
+server:
+  port: 8090
+
+#spring.jackson.property-naming-strategy: SNAKE_CASE
+
+#Logging
+#logging.description: true
+
+spring:
+  jpa:
+    show-sql: true
+    open-in-view: true
+    hibernate:
+      ddl-auto: create-drop
+      naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL57Dialect
+        temp.use_jdbc_metadata_defaults: false
+  datasource:
+    ###***VALUE TO RUN WITH WINDOWS LOCAL***
+    #url: jdbc:mysql://localhost:3306/demo_db
+    ###***VALUE TO RUN WITH LINUX LOCAL***
+    url: jdbc:mysql://${DB_HOST}/${DB_NAME}?verifyServerCertificate=false&useSSL=false&requireSSL=false&allowPublicKeyRetrieval=True
+    ###***VALUE TO RUN WITH DOCKER***
+    #url: jdbc:mysql://mysql:3306/demo-db?verifyServerCertificate=false&useSSL=false&requireSSL=false&allowPublicKeyRetrieval=true
+    ###***VALUE TO RUN WITH DOCKER-COMPOSE***
+    #url: jdbc:mysql://db:3306/demo_db
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.jdbc.Driver
+    testWhileIdle: true
+    validationQuery: SELECT 1
